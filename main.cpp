@@ -158,7 +158,7 @@ int main()
                         switch (aksi)
                         {
                         case 1:
-                            cout << "Aksi tambah suplier" << endl;
+                            cout << "Aksi tambah bahan baku" << endl;
                             break;
                         case 2:
                             cout << "Aksi melihat riwayat stok" << endl;
