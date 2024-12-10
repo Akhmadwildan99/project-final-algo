@@ -2,6 +2,71 @@
 #include <string>
 using namespace std;
 
+int app = 1, role, menu, aksi;
+const int size_suplier = 10;
+
+
+// data suplier
+int current_position_suplier = 0;
+string kodes[size_suplier];
+string bahans[size_suplier];
+int jumlahs[size_suplier];
+// data suplier
+
+void tambahSuplier() {
+    string kode, bahan;
+    int jumlah;
+    cout << "\nMasukan kode: ";
+    cin >> kode;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << "Masukan jenis bahan: ";
+    getline(cin, bahan);
+    cout << "Masukan jumlah: ";
+    cin >> jumlah;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+
+    if(current_position_suplier > size_suplier) {
+
+    } else {
+        kodes[current_position_suplier] = kode;
+        bahans[current_position_suplier] = bahan;
+        jumlahs[current_position_suplier] = jumlah;
+        current_position_suplier++;
+    }
+
+    // printSuplier();
+}
+
+void printSuplier() {
+    cout <<""<<endl;
+    cout << "Kode                Jenis bahan        Jumlah" << endl;
+    cout << "---------------------------------------------" << endl;
+
+
+    for (int i = 0; i < current_position_suplier; i++)
+    {
+        /* code */
+        cout << kodes[i];
+        for (int j = kodes[i].length(); j < 20; j++)
+        {
+            /* code */
+            cout<<" ";
+        }
+        
+        cout << bahans[i];
+         for (int j = bahans[i].length(); j < 20; j++)
+        {
+            /* code */
+            cout<<" ";
+        }
+        cout << jumlahs[i] << endl;
+
+    }
+    
+
+}
+
 void pilihRole()
 {
     cout << "**************************************" << endl;
@@ -38,14 +103,39 @@ void staffProduksiMenu()
 
 void aksiMenuSplier()
 {
-    cout << "\n Sub Menu Suplier "
-         << "\n1. Tambah data"
-         << "\n2. Data suplier"
-         << "\n3. Cari suplier"
-         << "\n4. Update rating suplier"
-         << "\n5. Kembali" << endl;
 
-    cout << "Pilih aksi: ";
+    int aksi;
+    do
+    {
+        cout << "\n Sub Menu Suplier "
+             << "\n1. Tambah data"
+             << "\n2. Data suplier"
+             << "\n3. Kembali" << endl;
+
+        cout << "Pilih aksi: ";
+
+        cin >> aksi;
+
+        switch (aksi)
+        {
+        case 1:
+            // cout << "\nAksi tambah suplier" << endl;
+            tambahSuplier();
+            break;
+        case 2:
+            // cout << "\nAksi melihat data suplier" << endl;
+            printSuplier();
+            break;
+
+        case 3:
+            cout << "Kembali ke pilih menu admin!" << endl;
+            break;
+
+        default:
+            cout << "Pilihan tidak valid silakan pilih aksi kembali!" << endl;
+        }
+
+    } while (aksi != 3);
 }
 
 void aksiMenuBahanBaku()
@@ -92,13 +182,9 @@ void aksiMenuPemantauanStok()
     cout << "Pilih aksi: ";
 }
 
-
-
-
 int main()
 {
-
-    int app = 1, role, menu, aksi;
+    
 
     do
     {
@@ -118,35 +204,7 @@ int main()
                 {
                 case 1:
 
-                    do
-                    {
-                        aksiMenuSplier();
-                        cin >> aksi;
-
-                        switch (aksi)
-                        {
-                        case 1:
-                            cout << "Aksi tambah suplier" << endl;
-                            break;
-                        case 2:
-                            cout << "Aksi melihat data suplier" << endl;
-                            break;
-                        case 3:
-                            cout << "Aksi mencari suplier" << endl;
-                            break;
-                        case 4:
-                            cout << "Aksi update rating suplier" << endl;
-                            break;
-                        case 5:
-                            cout << "Kembali ke pilih menu admin!" << endl;
-                            break;
-
-                        default:
-                            cout << "Pilihan tidak valid silakan pilih aksi kembali!" << endl;
-                        }
-
-                    } while (aksi != 5);
-
+                    aksiMenuSplier();
                     break;
                 case 2:
 
