@@ -5,6 +5,7 @@ using namespace std;
 int app = 1, role, menu, aksi;
 const int size_suplier = 100;
 const int size_stoks = 100;
+const int size_proyek = 100;
 // const int size_stok_historis = 1000;
 
 
@@ -22,6 +23,20 @@ string nama_stoks[size_stoks];
 int jumlah_stoks[size_stoks];
 // data stok
 
+// data proyek
+int current_position_proyek= 0;
+string kode_proyeks[size_proyek];
+string pesanans[size_proyek];
+string deskripsi_proyeks[size_proyek];
+int start_tanggal_proyeks[size_proyek];
+int start_bulan_proyeks[size_proyek];
+int start_tahun_proyeks[size_proyek];
+int end_tanggal_proyeks[size_proyek];
+int end_bulan_proyeks[size_proyek];
+int end_tahun_proyeks[size_proyek];
+int status_proyeks[size_proyek];
+// data proyek
+
 // // data stok histori
 // int current_position_stok_histori = 0;
 // string kode_stok_historis[size_stok_historis];
@@ -29,6 +44,76 @@ int jumlah_stoks[size_stoks];
 // int jumlah_stok_historis[size_stok_historis];
 
 // // data stok histori
+
+// validate kode
+
+
+
+bool validateKodeProyek(string kode) {
+    for (int i = 0; i < current_position_proyek; i++)
+    {
+        /* code */
+        if(kode_proyeks[i] == kode) {
+            cout << "Kode: " << kode << " sudah pernah diinput"<< endl;
+            return true;
+        }
+    }
+
+    return false;
+    
+}
+
+
+
+
+// input and validate  tanggal
+bool validateTanggal(int tanggal, int bulan, int tahun) {
+    if(tanggal >= 0 && tanggal <= 31) {
+
+        // bulan tanggal 30
+        if(tanggal == 31 && (bulan == 2 || bulan == 4 || bulan == 6 || bulan == 9 || bulan == 11)){
+            cout << "\ntanggal dan bulan invalid!!!!" << endl;
+            return false;
+        }
+
+        
+
+        // bukan kabisat
+        int kabisat = false;
+        if(tahun % 4 == 0 || tahun % 400 == 0) {
+            kabisat = true;
+        }
+
+        // bulan 28
+        if(tanggal == 29 && bulan == 2 && !kabisat) {
+            cout << "\nbukan tahun kabisat!!!!"<< endl;
+            return false;
+        } 
+
+
+
+        return true;
+    }
+
+    return false;
+}
+
+bool validateBulan(int bulan) {
+    if(bulan >= 0 && bulan <= 12) {
+        return true;
+    }
+
+    cout << "\nbulan invalid!!!!"<< endl;
+    return false;
+}
+
+
+string convertIntToStr(int num) {
+    if(to_string(num).length() == 1) {
+        return "0"+ to_string(num);
+    }
+    return to_string(num);
+}
 
 void tambahSuplier() {
     string kode,nama, bahan;
@@ -170,6 +255,215 @@ void tambahBahanBaku() {
 // jika belum ada buat baru
 
 
+
+// Di menu admin belum terdapat menu tambah proyek
+// berisi kode proyek, deskripsi tanggal mulai, tanggl selesai, status
+// data ini nantinya untuk validasi pengambilan bahan proyek
+// apakah proyek exist? && apakah proyek belum selesai?
+
+// admin -> pilih menu proyek -> tambah proyek
+// validasi proyek yang sama sudah diinput atau belum?
+
+// int current_position_proyek= 0;
+// string kode_proyeks[size_proyek];
+// string pesanans[size_proyek];
+// string deskripsi_proyeks[size_proyek];
+// int start_tanggal_proyeks[size_proyek];
+// int start_bulan_proyeks[size_proyek];
+// int start_tahun_proyeks[size_proyek];
+// int end_tanggal_proyeks[size_proyek];
+// int end_bulan_proyeks[size_proyek];
+// int end_tahun_proyeks[size_proyek];
+// int status_proyeks[size_proyek];
+
+
+string converStatus(int num) {
+    string status = "";
+    switch (num)
+    {
+    case 0:
+        status= "Mulai";
+        break;
+    case 1:
+        status= "Proses";
+        break;
+    case 2:
+        status= "Selesai";
+        break;
+    default:
+        break;
+    }
+
+    return status;
+
+}
+
+
+
+void printProyek(int from, int end) {
+    cout <<""<<endl;
+    cout << "No  Kode                Jenis pesanan       Deskripsi                    Tanggal mulai  Tanggal selesai  Status pesanan" << endl;
+    cout << "-----------------------------------------------------------------------------------------------------------------------" << endl;
+
+    int nomor = 1;
+    for (int i = from; i < end; i++)
+    {
+        cout << nomor;
+        string number = to_string(nomor);
+        for (int j = number.length(); j <  4; j++)
+        {
+            /* code */
+            cout << " ";
+        }
+        
+        /* code */
+        cout << kode_proyeks[i];
+        for (int j = kode_proyeks[i].length(); j < 20; j++)
+        {
+            /* code */
+            cout<<" ";
+        }
+        
+        cout << pesanans[i];
+         for (int j = pesanans[i].length(); j < 20; j++)
+        {
+            /* code */
+            cout<<" ";
+        }
+
+        cout << deskripsi_proyeks[i];
+         for (int j = deskripsi_proyeks[i].length(); j < 30; j++)
+        {
+            /* code */
+            cout<<" ";
+        }
+
+        cout << convertIntToStr(start_tanggal_proyeks[i])  << "/" << convertIntToStr(start_bulan_proyeks[i]) << "/" << convertIntToStr(start_tahun_proyeks[i]);
+        cout << "     ";
+
+        cout << convertIntToStr(end_tanggal_proyeks[i])  << "/" << convertIntToStr(end_bulan_proyeks[i]) << "/" << convertIntToStr(end_tahun_proyeks[i]);
+        cout << "       ";
+
+
+        cout << converStatus(status_proyeks[i]);
+
+        
+        nomor++;
+    }
+    
+
+}
+
+
+void tambahDataProyek() {
+    string kode, pesanan, deskripsi_proyek;
+    int start_tanggal, start_bulan, start_tahun, end_tanggal, end_bulan, end_tahun;
+    do
+    {
+        cout << "Masukan kode: ";
+        cin >> kode;
+         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        /* code */
+    } while (validateKodeProyek(kode) == true);
+
+    cout << "Masukan pesanan: ";
+    getline(cin, pesanan);
+    cout << "Masukan deskripsi: ";
+    getline(cin, deskripsi_proyek);
+
+    int inputTglStart = 0;
+    int inputTglEnd = 0;
+    do
+    {
+        if(inputTglStart > 0) {
+            cout << "Masukan tanggal mulai lagi: "   << endl;
+            
+        } else {
+            cout << "Masukan tanggal mulai: "   << endl;
+        }
+        
+        cout << "Masukan tanggal: ";
+        cin >> start_tanggal;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Masukan bulan: ";
+        cin >> start_bulan;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Masukan tahun: ";
+        cin >> start_tahun;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        inputTglStart++;
+    } while (!validateBulan(start_bulan) || !validateTanggal(start_tanggal, start_bulan, start_tahun));
+    
+    do
+    {
+        if(inputTglEnd > 0) {
+            cout << "Masukan tanggal selesai lagi: " << endl;
+        } else {
+            cout << "Masukan tanggal selesai: " << endl;
+        }
+    
+        cout << "Masukan tanggal: ";
+        cin >> end_tanggal;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Masukan bulan: ";
+        cin >> end_bulan;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Masukan tahun: ";
+        cin >> end_tahun;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    } while (!validateBulan(end_bulan) || !validateTanggal(end_tanggal, end_bulan, end_tahun));
+   
+
+    // push ke data
+    kode_proyeks[current_position_proyek] = kode;
+    pesanans[current_position_proyek] = pesanan;
+    deskripsi_proyeks[current_position_proyek] = deskripsi_proyek;
+    start_tanggal_proyeks[current_position_proyek] = start_tanggal;
+    start_bulan_proyeks[current_position_proyek] = start_bulan;
+    start_tahun_proyeks[current_position_proyek] = start_tahun;
+    end_tanggal_proyeks[current_position_proyek] = end_tanggal;
+    end_bulan_proyeks[current_position_proyek] = end_bulan;
+    end_tahun_proyeks[current_position_proyek] = end_tahun;
+    status_proyeks[current_position_proyek] = 0;
+    current_position_proyek++;
+
+    cout << "\nHoreyy proyek dengan kode "<< kode << " berhasil di ditambah...." << endl;
+
+    printProyek(current_position_proyek -1, current_position_proyek);
+  
+}
+
+
+void aksiMenuAdminProyek() {
+    int aksi;
+    do
+    {
+        cout << "\n\nManajemen Proyek "
+             << "\n1. Tambah data"
+             << "\n2. Lihat data"
+             << "\n3. Kembali" << endl;
+
+        cout << "Pilih aksi: ";
+        cin >> aksi;
+
+        switch (aksi)
+        {
+        case 1:
+            // aksi tambah proyek
+            tambahDataProyek();
+            break;
+        case 2:
+            printProyek(0, current_position_proyek);
+        case 3:
+            cout << "\nKembali ke menu admin!";
+            break;
+        default:
+            break;
+        }
+    } while (aksi != 3);
+    
+}
 
 void pilihRole()
 {
@@ -338,35 +632,7 @@ int main()
                     aksiMenuBahanBaku();
                     break;
                 case 3:
-
-                    do
-                    {
-                        aksiMenuProyek();
-                        cin >> aksi;
-
-                        switch (aksi)
-                        {
-                        case 1:
-                            cout << "Aksi melihat semua proyek" << endl;
-                            break;
-                        case 2:
-                            cout << "Aksi melihat detail penggunaan bahan per proyek" << endl;
-                            break;
-                        case 3:
-                            cout << "Aksi melihat status proyek" << endl;
-                            break;
-                        case 4:
-                            cout << "Aksi melihat estimasi proyek" << endl;
-                            break;
-                        case 5:
-                            cout << "Kembali ke pilih menu admin!" << endl;
-                            break;
-
-                        default:
-                            cout << "Pilihan tidak valid silakan pilih aksi kembali!" << endl;
-                        }
-
-                    } while (aksi != 5);
+                    aksiMenuAdminProyek();
                     break;
                 case 4:
                     cout << "Kembali ke pilih role!" << endl;
