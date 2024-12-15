@@ -144,8 +144,8 @@ void tambahSuplier() {
 
 void printSuplier() {
     cout <<""<<endl;
-    cout << "Kode                Suplier             Jenis bahan" << endl;
-    cout << "---------------------------------------------------" << endl;
+    cout << "Kode                Suplier                       Jenis bahan" << endl;
+    cout << "-------------------------------------------------------------" << endl;
 
 
     for (int i = 0; i < current_position_suplier; i++)
@@ -159,7 +159,7 @@ void printSuplier() {
         }
         
         cout << namas[i];
-         for (int j = namas[i].length(); j < 20; j++)
+         for (int j = namas[i].length(); j < 30; j++)
         {
             /* code */
             cout<<" ";
@@ -282,12 +282,15 @@ string converStatus(int num) {
     switch (num)
     {
     case 0:
-        status= "Mulai";
+        status= "Draft";
         break;
     case 1:
-        status= "Proses";
+        status= "Mulai";
         break;
     case 2:
+        status= "Proses";
+        break;
+    case 3:
         status= "Selesai";
         break;
     default:
@@ -300,7 +303,7 @@ string converStatus(int num) {
 
 
 
-void printProyek(int from, int end) {
+void printProyek(int from, int end, int status) {
     cout <<""<<endl;
     cout << "No  Kode                Jenis pesanan       Deskripsi                    Tanggal mulai  Tanggal selesai  Status pesanan" << endl;
     cout << "-----------------------------------------------------------------------------------------------------------------------" << endl;
@@ -308,6 +311,9 @@ void printProyek(int from, int end) {
     int nomor = 1;
     for (int i = from; i < end; i++)
     {
+        if(status == 1 && (status_proyeks[i] == 0 || status_proyeks[i] == 3)) {
+            continue;
+        }
         cout << nomor;
         string number = to_string(nomor);
         for (int j = number.length(); j <  4; j++)
@@ -353,6 +359,102 @@ void printProyek(int from, int end) {
     
 
 }
+
+void printProyekIdStatus() {
+    cout <<""<<endl;
+    cout << "Id  Kode                Jenis pesanan       Status pesanan" << endl;
+    cout << "----------------------------------------------------------" << endl;
+
+    for (int i = 0; i < current_position_proyek; i++)
+    {
+        string id = to_string(i+1);
+        cout << id;
+        for (int j = id.length(); j <  4; j++)
+        {
+            /* code */
+            cout << " ";
+        }
+
+        /* code */
+        cout << kode_proyeks[i];
+        for (int j = kode_proyeks[i].length(); j < 20; j++)
+        {
+            /* code */
+            cout<<" ";
+        }
+        
+        cout << pesanans[i];
+         for (int j = pesanans[i].length(); j < 20; j++)
+        {
+            /* code */
+            cout<<" ";
+        }
+
+        cout << converStatus(status_proyeks[i]);
+
+    }
+}
+
+
+// fungsi manajemen proyek
+void updatedStatusProyek() {
+    int id, status;
+    char agree;
+    printProyekIdStatus();
+    // pilih proyek
+    cout << "\nMasukan id proyek: ";
+    cin >> id;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    id = id - 1;
+    // tampil status
+    cout << "\nPilih status proyek: " 
+    << "\n1. Draft" << "\n2. Mulai" << "\n3. Proses" << "\n4. Selesai";
+    
+    // masukan status
+    cout << "\nMasukan status proyek: ";
+    cin >> status;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+
+    // apakah yakin akan mengubah status proyek?
+    cout << "Apakah Anda setuju? (y/t): ";
+    cin >> agree;
+
+    if(agree == 'y') {
+        switch (status)
+        {
+        case 1:
+            status_proyeks[id] = 0;
+            break;
+        case 2:
+            status_proyeks[id] = 1;
+            break;
+        case 3:
+            status_proyeks[id] = 2;
+            break;
+        case 4:
+            status_proyeks[id] = 3;
+            break;
+        
+        default:
+            cout << "\nGagal update status proyek: " << kode_proyeks[id];
+            cout << "\nPilihan status invalid" << endl;
+            break;
+        } 
+
+        cout << "\nBerhasil update status proyek: " << kode_proyeks[id] << endl;
+    } else {
+        cout << "\nGagal update status proyek: " << kode_proyeks[id] << endl;
+    }
+
+    // pesan berhasil
+}
+
+void printProyekAktif() {
+    printProyek(0, current_position_proyek, 1);
+}
+// fungsi manajemen proyek
 
 
 void tambahDataProyek() {
@@ -430,7 +532,7 @@ void tambahDataProyek() {
 
     cout << "\nHoreyy proyek dengan kode "<< kode << " berhasil di ditambah...." << endl;
 
-    printProyek(current_position_proyek -1, current_position_proyek);
+    printProyek(current_position_proyek -1, current_position_proyek, 0);
   
 }
 
@@ -446,6 +548,7 @@ void aksiMenuAdminProyek() {
 
         cout << "Pilih aksi: ";
         cin >> aksi;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         switch (aksi)
         {
@@ -454,7 +557,7 @@ void aksiMenuAdminProyek() {
             tambahDataProyek();
             break;
         case 2:
-            printProyek(0, current_position_proyek);
+            printProyek(0, current_position_proyek, 0);
         case 3:
             cout << "\nKembali ke menu admin!";
             break;
@@ -464,6 +567,8 @@ void aksiMenuAdminProyek() {
     } while (aksi != 3);
     
 }
+
+
 
 void pilihRole()
 {
@@ -493,7 +598,7 @@ void staffProduksiMenu()
 {
     cout << "\n Menu Staff "
          << "\n1. Manajemen Produksi"
-         << "\n2. Pemantauan stok"
+         << "\n2. Manajemen proyek"
          << "\n3. Keluar" << endl;
 
     cout << "Pilih menu: ";
@@ -513,6 +618,7 @@ void aksiMenuSplier()
         cout << "Pilih aksi: ";
 
         cin >> aksi;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         switch (aksi)
         {
@@ -550,6 +656,7 @@ void aksiMenuBahanBaku()
         cout << "Pilih aksi: ";
 
         cin >> aksi;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         switch (aksi)
         {
@@ -571,6 +678,9 @@ void aksiMenuBahanBaku()
     } while (aksi != 3);
 }
 
+
+
+
 void aksiMenuProyek()
 {
     cout << "\n Sub Menu Proyek "
@@ -585,22 +695,50 @@ void aksiMenuProyek()
 
 void aksiMenuManajemenProduksi()
 {
-    cout << "\n Sub Menu Proyek "
+    cout << "\n Sub Menu Manajemen produksi "
          << "\n1. Pengambilan bahan untuk proyek"
-         << "\n2. Progress pengerjaan proyek"
+         << "\n2. Ketersediaan bahan"
          << "\n3. Kembali" << endl;
 
     cout << "Pilih aksi: ";
 }
 
-void aksiMenuPemantauanStok()
+void aksiMenuStaffProyek()
 {
-    cout << "\n Sub Menu Proyek "
-         << "\n1. Pengambilan bahan untuk proyek"
-         << "\n2. Progress pengerjaan proyek"
+
+
+    int aksi;
+
+    do
+    {
+        cout << "\n\nSub Menu Manajemen Status proyek "
+         << "\n1. Status proyek"
+         << "\n2. daftar proyek aktif"
          << "\n3. Kembali" << endl;
 
-    cout << "Pilih aksi: ";
+        cout << "Pilih aksi: ";
+
+        cin >> aksi;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        switch (aksi)
+        {
+        case 1:
+            updatedStatusProyek();
+            break;
+        case 2:
+            printProyekAktif();
+            break;
+     
+        case 3:
+            cout << "Kembali ke pilih menu admin!" << endl;
+            break;
+
+        default:
+            cout << "Pilihan tidak valid silakan pilih aksi kembali!" << endl;
+        }
+
+    } while (aksi != 3);
 }
 
 int main()
@@ -611,6 +749,7 @@ int main()
     {
         pilihRole();
         cin >> role;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         switch (role)
         {
@@ -620,6 +759,7 @@ int main()
             {
                 adminMenu();
                 cin >> menu;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                 switch (menu)
                 {
@@ -650,6 +790,7 @@ int main()
             {
                 staffProduksiMenu();
                 cin >> menu;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                 switch (menu)
                 {
@@ -659,6 +800,7 @@ int main()
                     {
                         aksiMenuManajemenProduksi();
                         cin >> aksi;
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                         switch (aksi)
                         {
@@ -680,37 +822,7 @@ int main()
                     } while (aksi != 3);
                     break;
                 case 2:
-
-                    staffProduksiMenu();
-                    cin >> menu;
-
-                    do
-                    {
-                        aksiMenuPemantauanStok();
-                        cin >> aksi;
-
-                        switch (aksi)
-                        {
-                        case 1:
-                            cout << "Aksi melihat ketersediaan bahan baku" << endl;
-                            break;
-                        case 2:
-                            cout << "Aksi melihat kualitas bahan tersedia" << endl;
-                            break;
-
-                        case 3:
-                            cout << "Aksi peringatan stok menipis" << endl;
-                            break;
-                        case 4:
-                            cout << "Kembali ke pilih menu staff!" << endl;
-                            break;
-
-                        default:
-                            cout << "Pilihan tidak valid silakan pilih aksi kembali!" << endl;
-                        }
-
-                    } while (aksi != 4);
-
+                    aksiMenuStaffProyek();
                     break;
 
                 case 3:
