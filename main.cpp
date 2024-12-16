@@ -6,6 +6,7 @@ int app = 1, role, menu, aksi;
 const int size_suplier = 100;
 const int size_stoks = 100;
 const int size_proyek = 100;
+const int size_stock_out = 100;
 // const int size_stok_historis = 1000;
 
 
@@ -37,13 +38,12 @@ int end_tahun_proyeks[size_proyek];
 int status_proyeks[size_proyek];
 // data proyek
 
-// // data stok histori
-// int current_position_stok_histori = 0;
-// string kode_stok_historis[size_stok_historis];
-// string nama_stok_historis[size_stok_historis];
-// int jumlah_stok_historis[size_stok_historis];
-
-// // data stok histori
+// Data pengeluaran bahan proyek
+int current_position_stock_out= 0;
+string kode_proyek_stock_out[size_stock_out];
+string bahan_stock_out[size_stock_out];
+int jumlah_stock_out[size_stock_out];
+// Data pengeluaran bahan proyek
 
 // validate kode
 
@@ -187,7 +187,7 @@ int indexOfStock(string nama, string kode) {
 }
 
 
-void printBahanBaku() {
+void printBahanBaku(int status) {
     cout <<""<<endl;
     cout << "Kode                Jenis bahan        Jumlah" << endl;
     cout << "---------------------------------------------" << endl;
@@ -195,6 +195,9 @@ void printBahanBaku() {
 
     for (int i = 0; i < current_position_stok; i++)
     {
+        if(status == 1 && jumlah_stoks[i] <= 0) {
+            continue;
+        }
         /* code */
         cout << kode_stoks[i];
         for (int j = kode_stoks[i].length(); j < 20; j++)
@@ -244,37 +247,6 @@ void tambahBahanBaku() {
     }
 }
 
-// tambah stok bisa pilih dari daftar bahan di suplier atau langsung
-// sebelum itu ada pilihan terlebih dahulu apakah mau ambil dari daftar
-// jika iya akan tampil bahan beserta nomernya
-// dan user bisa input nomer dari bahan tsb
-// setelah pilih maka tinggal input kode dan jumlah
-// jika tidak input manual semuanya
-// sterlah input proses validasi jika bahan sudah tersedia di stok 
-// maka increase stok
-// jika belum ada buat baru
-
-
-
-// Di menu admin belum terdapat menu tambah proyek
-// berisi kode proyek, deskripsi tanggal mulai, tanggl selesai, status
-// data ini nantinya untuk validasi pengambilan bahan proyek
-// apakah proyek exist? && apakah proyek belum selesai?
-
-// admin -> pilih menu proyek -> tambah proyek
-// validasi proyek yang sama sudah diinput atau belum?
-
-// int current_position_proyek= 0;
-// string kode_proyeks[size_proyek];
-// string pesanans[size_proyek];
-// string deskripsi_proyeks[size_proyek];
-// int start_tanggal_proyeks[size_proyek];
-// int start_bulan_proyeks[size_proyek];
-// int start_tahun_proyeks[size_proyek];
-// int end_tanggal_proyeks[size_proyek];
-// int end_bulan_proyeks[size_proyek];
-// int end_tahun_proyeks[size_proyek];
-// int status_proyeks[size_proyek];
 
 
 string converStatus(int num) {
@@ -537,6 +509,101 @@ void tambahDataProyek() {
 }
 
 
+// fungsi manajemen bahan baku staff 
+bool validateKodeProyekAktif(string kode) {
+
+    for (int i = 0; i < current_position_proyek; i++)
+    {
+        /* code */
+        if(kode_proyeks[i] == kode && (status_proyeks[i] == 1 || status_proyeks[i] == 2)) {
+            return true;
+        }
+    }
+
+    return false;
+    
+}
+
+int indexOfBahan(string bahan) {
+    for (int i = 0; i < current_position_stok; i++)
+    {
+        /* code */
+        if( bahans[i] == bahan) {
+            return i;
+        }
+    }
+
+
+    return -1;
+    
+}
+
+
+bool validateStockExist(int idx, int qtyPermintaan) {
+    if(jumlah_stoks[idx] > qtyPermintaan) {
+        return true;
+    }
+
+    return false;
+}
+
+
+void recordPengeluaranBahan() {
+    string bahan, kode;
+    int idBahan, jumlah;
+    cout << "\nPengeluaran bahan proyek" << endl;
+    cout << "Masukan kode proyek: ";
+    cin >> kode;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << "Masukan nama bahan: ";
+    
+    getline(cin, bahan);
+
+    cout << "Masukan jumlah pengambilan: ";
+    cin >> jumlah;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+
+    if(!validateKodeProyekAktif(kode)) {
+        cout << "\nMaaf kode proyek yang anda pilih tidak tersedia....."<< endl;
+        return;
+    }
+
+    int idx = indexOfBahan(bahan);
+
+    if(idx == -1) {
+        cout << "\nMaaf bahan tidak tersedia di dalam gudang ....."<< endl;
+        return;
+    }
+
+    
+
+    if(!validateStockExist(idx, jumlah)) {
+        cout << "\nMaaf jumlah bahan " <<bahan << " saat ini tidak cukup ....."<< endl;
+        return;
+    }
+
+
+    jumlah_stoks[idx] -= jumlah; 
+
+
+    kode_proyek_stock_out[current_position_stock_out] = kode;
+    bahan_stock_out[current_position_stock_out] = bahan;
+    jumlah_stock_out[current_position_stock_out] = jumlah;
+    current_position_stock_out++;
+
+    cout << "\nHoreeeey kamu berhasil mengambil bahan "  << bahan << " untuk proyek kode: "<< kode << endl;
+
+}
+
+
+
+
+
+
+// fungsi manajemen bahan baku staff 
+
+
 void aksiMenuAdminProyek() {
     int aksi;
     do
@@ -664,7 +731,7 @@ void aksiMenuBahanBaku()
             tambahBahanBaku();
             break;
         case 2:
-            printBahanBaku();
+            printBahanBaku(0);
             break;
      
         case 3:
@@ -679,28 +746,39 @@ void aksiMenuBahanBaku()
 }
 
 
-
-
-void aksiMenuProyek()
-{
-    cout << "\n Sub Menu Proyek "
-         << "\n1. Semua proyek"
-         << "\n2. Detail penggunaan bahan per proyek"
-         << "\n3. Status proyek"
-         << "\n4. Estimasi proyek selesai"
-         << "\n5. Kembali" << endl;
-
-    cout << "Pilih aksi: ";
-}
-
 void aksiMenuManajemenProduksi()
 {
-    cout << "\n Sub Menu Manajemen produksi "
+    
+    int aksi;
+    do
+    {
+        cout << "\n Sub Menu Manajemen produksi "
          << "\n1. Pengambilan bahan untuk proyek"
          << "\n2. Ketersediaan bahan"
          << "\n3. Kembali" << endl;
 
-    cout << "Pilih aksi: ";
+         cout << "Pilih aksi: ";
+        cin >> aksi;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        switch (aksi)
+        {
+        case 1:
+            recordPengeluaranBahan();
+            break;
+        case 2:
+             printBahanBaku(1);
+            break;
+
+        case 3:
+            cout << "Kembali ke pilih menu staff!" << endl;
+            break;
+
+        default:
+            cout << "Pilihan tidak valid silakan pilih aksi kembali!" << endl;
+        }
+
+    } while (aksi != 3);
 }
 
 void aksiMenuStaffProyek()
@@ -796,30 +874,7 @@ int main()
                 {
                 case 1:
 
-                    do
-                    {
-                        aksiMenuManajemenProduksi();
-                        cin >> aksi;
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-                        switch (aksi)
-                        {
-                        case 1:
-                            cout << "Aksi pengambilan bahan untuk proyek" << endl;
-                            break;
-                        case 2:
-                            cout << "Aksi melihat progress pengerjaan proyek" << endl;
-                            break;
-
-                        case 3:
-                            cout << "Kembali ke pilih menu staff!" << endl;
-                            break;
-
-                        default:
-                            cout << "Pilihan tidak valid silakan pilih aksi kembali!" << endl;
-                        }
-
-                    } while (aksi != 3);
+                    aksiMenuManajemenProduksi();
                     break;
                 case 2:
                     aksiMenuStaffProyek();
