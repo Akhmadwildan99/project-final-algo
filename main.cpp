@@ -7,14 +7,17 @@ const int size_suplier = 100;
 const int size_stoks = 100;
 const int size_proyek = 100;
 const int size_stock_out = 100;
+const int size_suplier_bahan = 1000;
 // const int size_stok_historis = 1000;
 
 
 // data suplier
 int current_position_suplier = 0;
+int current_position_suplier_bahan = 0;
 string kodes[size_suplier];
 string namas[size_suplier];
-string bahans[size_suplier];
+string bahans[size_suplier_bahan];
+string ref_suplier_kode[size_suplier_bahan];
 // data suplier
 
 // data stok
@@ -46,9 +49,6 @@ int jumlah_stock_out[size_stock_out];
 // Data pengeluaran bahan proyek
 
 // validate kode
-
-
-
 bool validateKodeProyek(string kode) {
     for (int i = 0; i < current_position_proyek; i++)
     {
@@ -116,30 +116,62 @@ string convertIntToStr(int num) {
 }
 
 void tambahSuplier() {
-    string kode,nama, bahan;
    
-    cout << "\nMasukan kode: ";
-    cin >> kode;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cout << "Masukan nama suplier: ";
-    getline(cin, nama);
-    cout << "Masukan jenis bahan: ";
-    getline(cin, bahan);
-    // cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
 
     if(current_position_suplier > size_suplier) {
-
+        cout << "\n Maaf penyimpanan suplier sudah penuh "<< endl;
     } else {
+            string kode,nama;
+
+        
+        int jumlahBahan;
+        cout << "\nMasukan kode: ";
+        cin >> kode;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Masukan nama suplier: ";
+        getline(cin, nama);
         kodes[current_position_suplier] = kode;
         namas[current_position_suplier] = nama;
-        bahans[current_position_suplier] = bahan;
+
+        cout << "Masukan jumlah bahan yang mau diinput: ";
+        cin >> jumlahBahan;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        string bahaninputs[jumlahBahan];
+
+        for (int i = 0; i < jumlahBahan; i++)
+        {
+            cout << "Masukan bahan ke-" << i+1 << " : ";
+            getline(cin, bahaninputs[i]);
+            bahans[current_position_suplier_bahan] = bahaninputs[i];
+            ref_suplier_kode[current_position_suplier_bahan] = kode;
+            current_position_suplier_bahan++;
+        }
+
         current_position_suplier++;
 
         cout << "\nHoreyy suplier " << nama << " berhasil di tambah...." << endl;
     }
 
-    // printSuplier();
+}
+
+string findBahansByKode(string kode) {
+    string bahan= "";
+    for (int i = 0; i < current_position_suplier_bahan; i++)
+    {
+        if(ref_suplier_kode[i] == kode) {
+
+            if(ref_suplier_kode[i + 1] == kode) {
+                bahan+= bahans[i] + ", ";
+            } else {
+                 bahan+= bahans[i];
+            }
+        }
+
+    }
+
+    return bahan;
+    
 }
 
 void printSuplier() {
@@ -164,7 +196,8 @@ void printSuplier() {
             /* code */
             cout<<" ";
         }
-        cout << bahans[i] << endl;
+        cout << findBahansByKode(kodes[i]) << endl;
+
 
     }
     
@@ -184,6 +217,17 @@ int indexOfStock(string nama, string kode) {
 
     return -1;
     
+}
+
+int indexOfBahanSuplier(string bahan) {
+    for (int i = 0; i < current_position_suplier_bahan; i++)
+    {
+       if( bahan == bahans[i]) {
+        return i;
+       }
+    }
+    
+    return -1;
 }
 
 
@@ -231,6 +275,11 @@ void tambahBahanBaku() {
     cout << "Masukan jumlah: ";
     cin >> jumlah;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    if(indexOfBahanSuplier(bahan) == -1) {
+        cout << "\nMaaf bahan " << bahan << " tidak tersedia di data suplier"<< endl;
+        return;
+    }
 
     int x = indexOfStock(bahan, kode);
     if(x != -1) {
@@ -645,7 +694,8 @@ void pilihRole()
     cout << "                                      " << endl;
     cout << "======================================" << endl;
     cout << "1. Admin" << endl;
-    cout << "2. Staff Produks" << endl;
+    cout << "2. Staff Produksi" << endl;
+    cout << "3. Matikan aplikasi" << endl;
     cout << "Pilih role: ";
 }
 
@@ -881,19 +931,21 @@ int main()
                     break;
 
                 case 3:
-                    cout << "Kembali ke pilih role!" << endl;
+                    cout << "\nKembali ke pilih role!" << endl;
                     break;
 
                 default:
-                    cout << "Pilihan tidak valid silakan pilih menu kembali!" << endl;
+                    cout << "\nPilihan tidak valid silakan pilih menu kembali!" << endl;
                 }
 
             } while (menu != 3);
             break;
+        case 3:
+            cout << "\nKamu mematikan aplikasi data akan hilang!!!" << endl;
         default:
-            cout << "Pilihan tidak valid silakan pilih role masuk kembali!" << endl;
+            cout << "\nPilihan tidak valid silakan pilih role masuk kembali!" << endl;
         }
-    } while (app == 1);
+    } while (role !=3);
 
     return 0;
 }
