@@ -115,11 +115,23 @@ string convertIntToStr(int num) {
     return to_string(num);
 }
 
+int indexOfSuplierKode(string kode) {
+    for (int i = 0; i < current_position_suplier; i++)
+    {
+        if(kode == kodes[i]) {
+            return i;
+        }
+    }
+
+    return -1;
+    
+}
+
 void tambahSuplier() {
    
 
-    if(current_position_suplier > size_suplier) {
-        cout << "\n Maaf penyimpanan suplier sudah penuh "<< endl;
+    if(current_position_suplier > size_suplier || current_position_suplier_bahan > size_suplier_bahan) {
+        cout << "\nMaaf penyimpanan suplier sudah penuh "<< endl;
     } else {
             string kode,nama;
 
@@ -130,6 +142,12 @@ void tambahSuplier() {
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Masukan nama suplier: ";
         getline(cin, nama);
+
+        if(indexOfSuplierKode(kode) != -1) {
+            cout << "\nKode " << kode << " Sudah terpakai!"<< endl;
+            return;
+        }
+
         kodes[current_position_suplier] = kode;
         namas[current_position_suplier] = nama;
 
@@ -219,6 +237,36 @@ int indexOfStock(string nama, string kode) {
     
 }
 
+int indexOfStockBahan(string nama) {
+    for (int i = 0; i <= current_position_stok; i++)
+    {
+        /* code */
+
+        if(nama_stoks[i] == nama ) {
+            return i;
+        }
+
+    }
+
+    return -1;
+    
+}
+
+int indexOfStockKode(string kode) {
+    for (int i = 0; i <= current_position_stok; i++)
+    {
+        /* code */
+
+        if(kode_stoks[i] == kode ) {
+            return i;
+        }
+
+    }
+
+    return -1;
+    
+}
+
 int indexOfBahanSuplier(string bahan) {
     for (int i = 0; i < current_position_suplier_bahan; i++)
     {
@@ -286,6 +334,20 @@ void tambahBahanBaku() {
         jumlah_stoks[x]+= jumlah;
         cout << "\nHoreyy stock "<< bahan << " berhasil di perbaharui...." << endl;
     } else if(x == -1 && size_stoks > current_position_stok){
+        int y  = indexOfStockBahan(bahan);
+        if(y != -1) {
+            cout << "\ntidak bisa menambah "<< bahan << " bahan tersebut telah terinput dengan kode " << kode_stoks[y]  << endl;
+            return;
+        }
+
+        int n = indexOfStockKode(kode);
+
+        if(n != -1) {
+            cout << "\ntidak bisa menambah "<< bahan << " dengan kode " << kode << " karena kode tersebut telah terinput dengan bahan yang berbeda " << endl;
+            return;
+        }
+
+
         kode_stoks[current_position_stok] = kode;
         nama_stoks[current_position_stok] = bahan;
         jumlah_stoks[current_position_stok] = jumlah;
@@ -577,7 +639,7 @@ int indexOfBahan(string bahan) {
     for (int i = 0; i < current_position_stok; i++)
     {
         /* code */
-        if( bahans[i] == bahan) {
+        if( nama_stoks[i] == bahan) {
             return i;
         }
     }
