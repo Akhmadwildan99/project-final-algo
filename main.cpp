@@ -651,13 +651,11 @@ void recordPengeluaranBahan() {
 
 
 // fungsi manajemen bahan baku staff 
-
-
 void aksiMenuAdminProyek() {
     int aksi;
     do
     {
-        cout << "\n\nManajemen Proyek "
+        cout << "\n\nProyek "
              << "\n1. Tambah data"
              << "\n2. Lihat data"
              << "\n3. Kembali" << endl;
@@ -690,7 +688,7 @@ void pilihRole()
 {
     cout << "**************************************" << endl;
     cout << "                                      " << endl;
-    cout << " Selamat Datang  Silahkan Pilih Role! " << endl;
+    cout << " Selamat Datang  Silahkan Pilih Role!" << endl;
     cout << "                                      " << endl;
     cout << "======================================" << endl;
     cout << "1. Admin" << endl;
@@ -702,7 +700,7 @@ void pilihRole()
 void adminMenu()
 {
 
-    cout << "\n Menu Admin "
+    cout << "\nMenu Admin "
          << "\n1. Suplier"
          << "\n2. Bahan Baku"
          << "\n3. Proyek"
@@ -713,9 +711,9 @@ void adminMenu()
 
 void staffProduksiMenu()
 {
-    cout << "\n Menu Staff "
+    cout << "\nMenu Staff "
          << "\n1. Manajemen Produksi"
-         << "\n2. Manajemen proyek"
+         << "\n2. Status proyek"
          << "\n3. Keluar" << endl;
 
     cout << "Pilih menu: ";
@@ -727,7 +725,7 @@ void aksiMenuSplier()
     int aksi;
     do
     {
-        cout << "\n Manajemen Suplier "
+        cout << "\nSuplier "
              << "\n1. Tambah data"
              << "\n2. Data suplier"
              << "\n3. Kembali" << endl;
@@ -765,7 +763,7 @@ void aksiMenuBahanBaku()
 
     do
     {
-        cout << "\n Manajemen Bahan Baku "
+        cout << "\nBahan Baku "
          << "\n1. Tambah data"
          << "\n2. Riwayat stok"
          << "\n3. Kembali" << endl;
@@ -802,7 +800,7 @@ void aksiMenuManajemenProduksi()
     int aksi;
     do
     {
-        cout << "\n Sub Menu Manajemen produksi "
+        cout << "\nManajemen produksi "
          << "\n1. Pengambilan bahan untuk proyek"
          << "\n2. Ketersediaan bahan"
          << "\n3. Kembali" << endl;
@@ -839,7 +837,7 @@ void aksiMenuStaffProyek()
 
     do
     {
-        cout << "\n\nSub Menu Manajemen Status proyek "
+        cout << "\n\nStatus proyek "
          << "\n1. Status proyek"
          << "\n2. daftar proyek aktif"
          << "\n3. Kembali" << endl;
