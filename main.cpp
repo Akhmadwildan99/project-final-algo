@@ -734,6 +734,7 @@ void aksiMenuAdminProyek() {
             break;
         case 2:
             printProyek(0, current_position_proyek, 0);
+            break;
         case 3:
             cout << "\nKembali ke menu admin!";
             break;
