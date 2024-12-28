@@ -38,3 +38,14 @@ Proyek ini adalah aplikasi manajemen proyek dan inventaris yang dirancang untuk 
 <img width="702" alt="image" src="https://github.com/user-attachments/assets/0440bbbb-9fbc-464a-827c-5ace4c2f98bb" />
 
 
+
+# Notes
+1. Navigasi dan pemilihan status di aplikasi ini menggunkan input nomor.
+2. Di menu suplier terdapat aksi menambah data. User akan diminta memasukkan kode, nama suplier dan jumlah bahan baku yang mau diinput, Setelah itu user akan diminta memasukan bahan baku sesuai jumlah jenis bahan baku yang diinput.
+3. Pada menu bahan baku di role admin. User akan diminta memasukan kode bahan baku, nama bahan baku dan jumlah. Dengan catatan bahan harus sesuai yang sudah diinput di menu suplier. Dan jika bahan A sudah terinput dengan kode AB maka untuk menambah stok bahan A harus menginput dengan kode dan nama bahan yang sama.
+4. Di menu proyek admin  akan diminta memasukan kode proyek, pesanan, keterangan, tanggal mulai dan selesai. Selesai menginput maka status proyek sementara draft.
+5. Staff produksi dapat mengubah status proyek pada menu Status proyek dan aksi Status proyek. User akan diminta memsukan id proyek dan memilih status dengan input berupa angka.
+6. Di role Staff produksi juga terdapat menu pengambilan bahan untuk proyek. User akan diminta memasukan kode proyek, nama bahan yang mau diambil dan jumlah yamg mau diambil. Jika berhasil stok bahan akan otomatis berkurang.
+
+
+
