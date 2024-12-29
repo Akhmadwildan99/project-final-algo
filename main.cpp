@@ -71,6 +71,11 @@ bool validateKodeProyek(string kode) {
 bool validateTanggal(int tanggal, int bulan, int tahun) {
     if(tanggal >= 0 && tanggal <= 31) {
 
+
+        if(bulan == 2 && tanggal > 29) {
+            return false;
+        }
+
         // bulan tanggal 30
         if(tanggal == 31 && (bulan == 2 || bulan == 4 || bulan == 6 || bulan == 9 || bulan == 11)){
             cout << "\ntanggal dan bulan invalid!!!!" << endl;
@@ -81,7 +86,7 @@ bool validateTanggal(int tanggal, int bulan, int tahun) {
 
         // bukan kabisat
         int kabisat = false;
-        if(tahun % 4 == 0 || tahun % 400 == 0) {
+        if((tahun % 4 == 0 && tahun % 100 != 0)|| tahun % 400 == 0) {
             kabisat = true;
         }
 
