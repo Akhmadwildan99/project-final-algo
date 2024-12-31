@@ -85,7 +85,7 @@ bool validateTanggal(int tanggal, int bulan, int tahun) {
 
         // bukan kabisat
         int kabisat = false;
-        if((tahun % 4 == 0 && tahun % 100 != 0) || tahun % 400 == 0) {
+        if((tahun % 4 == 0 && tahun % 100 != 0)|| tahun % 400 == 0) {
             kabisat = true;
         }
 
