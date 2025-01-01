@@ -211,8 +211,7 @@ void tambahSuplier()
         return;
     }
 
-    kodes[current_position_suplier] = kode;
-    namas[current_position_suplier] = nama;
+    
 
     cout << "Masukan jumlah bahan yang mau diinput: ";
     cin >> jumlahBahan;
@@ -224,6 +223,9 @@ void tambahSuplier()
     if(validateInputJumlahBahan(n)){
         return;
     }
+
+    kodes[current_position_suplier] = kode;
+    namas[current_position_suplier] = nama;
 
     for (int i = 0; i < jumlahBahan; i++)
     {
