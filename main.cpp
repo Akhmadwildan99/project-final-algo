@@ -169,13 +169,23 @@ int indexOfSuplierKode(string kode)
 
 
 
-void validateSizeSuplierBahan()
+bool validateSizeSuplierBahan()
 {
     if (current_position_suplier >= size_suplier || current_position_suplier_bahan >= size_suplier_bahan)
     {
         cout << "\nMaaf penyimpanan suplier sudah penuh " << endl;
-        return;
+        return true;
     }
+    return false;
+}
+
+bool validateInputJumlahBahan(int n) {
+    if(n > size_suplier_bahan) {
+        cout << "\nInput jumlah bahan invalid!" << endl;
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -183,7 +193,9 @@ void validateSizeSuplierBahan()
 void tambahSuplier()
 {
 
-    validateSizeSuplierBahan();
+    if(validateSizeSuplierBahan()) {
+        return;
+    }
     string kode, nama;
 
     int jumlahBahan;
@@ -209,8 +221,7 @@ void tambahSuplier()
     string bahaninputs[jumlahBahan];
 
     int n = jumlahBahan + current_position_suplier_bahan;
-    if(n > size_suplier_bahan) {
-        cout << "\nInput jumlah bahan invalid!" << endl;
+    if(validateInputJumlahBahan(n)){
         return;
     }
 
