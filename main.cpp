@@ -18,6 +18,8 @@ string kodes[size_suplier];
 string namas[size_suplier];
 string bahans[size_suplier_bahan];
 string ref_suplier_kode[size_suplier_bahan];
+bool status_bahans[size_suplier_bahan];
+bool status_suplier[size_suplier];
 // data suplier
 
 // data stok
@@ -25,6 +27,7 @@ int current_position_stok = 0;
 string kode_stoks[size_stoks];
 string nama_stoks[size_stoks];
 int jumlah_stoks[size_stoks];
+bool status_bahan_stoks[size_stoks];
 // data stok
 
 // data proyek
@@ -48,6 +51,8 @@ string bahan_stock_out[size_stock_out];
 int jumlah_stock_out[size_stock_out];
 // Data pengeluaran bahan proyek
 
+
+
 // validate kode
 bool validateKodeProyek(string kode)
 {
@@ -62,6 +67,33 @@ bool validateKodeProyek(string kode)
     }
 
     return false;
+}
+
+int indexOfBahanSuplier(string bahan)
+{
+    for (int i = 0; i < current_position_suplier_bahan; i++)
+    {
+        if (bahan == bahans[i] && status_bahans[i])
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+int indexOfBahan(string bahan)
+{
+    for (int i = 0; i < current_position_stok; i++)
+    {
+        /* code */
+        if (nama_stoks[i] == bahan)
+        {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 // input and validate  tanggal
@@ -135,6 +167,8 @@ int indexOfSuplierKode(string kode)
     return -1;
 }
 
+
+
 void validateSizeSuplierBahan()
 {
     if (current_position_suplier >= size_suplier || current_position_suplier_bahan >= size_suplier_bahan)
@@ -186,13 +220,104 @@ void tambahSuplier()
         getline(cin, bahaninputs[i]);
         bahans[current_position_suplier_bahan] = bahaninputs[i];
         ref_suplier_kode[current_position_suplier_bahan] = kode;
+        status_bahans[current_position_suplier_bahan]= true;
+
+        int idxBahan= indexOfBahan(bahaninputs[i]);
+
+        if(idxBahan != -1 && !status_bahan_stoks[idxBahan]) {
+            status_bahan_stoks[idxBahan]= true;
+        }
+
         current_position_suplier_bahan++;
     }
 
+    status_suplier[current_position_suplier]= true;
     current_position_suplier++;
 
     cout << "\nHoreyy suplier " << nama << " berhasil di tambah...." << endl;
 }
+
+
+
+
+int jumlahBahanSuplier(string bahan) {
+    int count=0;
+     for (int i = 0; i < current_position_suplier_bahan; i++)
+    {
+       if(bahans[i] == bahan) {
+        count++;
+       }
+    }
+    return count;
+
+}
+
+// non aktif bahan di stok
+void nonAktifBahanStok(string bahan) {
+
+    if(jumlahBahanSuplier(bahan) > 1) {
+        return;
+    }
+
+    for (int i = 0; i < current_position_stok; i++)
+    {
+        if(nama_stoks[i] == bahan) {
+            status_bahan_stoks[i] = false;
+        }
+    }
+    
+}
+
+// non aktif suplier
+
+void nonAktifBahanSuplier(string kode) {
+
+    // non aktif bahan di suplier
+    for (int i = 0; i < current_position_suplier_bahan; i++)
+    {
+        if(ref_suplier_kode[i] == kode) {
+            nonAktifBahanStok(bahans[i]);
+            status_bahans[i] = false;
+        }
+    }
+
+}
+
+
+
+void nonAktifSuplier() {
+    string kode;
+    char agree;
+
+    cout << "\nMasukan kode: ";
+    cin >> kode;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    int idSuplier= indexOfSuplierKode(kode);
+    if (idSuplier == -1)
+    {
+        cout << "\nKode " << kode << " tidak ada di daftar!" << endl;
+        return;
+    }
+
+
+
+    // apakah yakin akan mengubah status proyek?
+    cout << "Apakah Anda setuju? (y/t): ";
+    cin >> agree;
+
+    if(agree == 'y') {
+        nonAktifBahanSuplier(kode);
+        status_suplier[idSuplier]= false;
+
+        cout << "\n Berhasil menonaktifkan suplier dengan kode " << kode << endl;
+    }
+        
+    
+
+
+}
+
 
 string findBahansByKode(string kode)
 {
@@ -224,6 +349,9 @@ void printSuplier()
 
     for (int i = 0; i < current_position_suplier; i++)
     {
+        if(!status_suplier[i]) {
+            continue;
+        }
         /* code */
         cout << kodes[i];
         for (int j = kodes[i].length(); j < 20; j++)
@@ -287,18 +415,7 @@ int indexOfStockKode(string kode)
     return -1;
 }
 
-int indexOfBahanSuplier(string bahan)
-{
-    for (int i = 0; i < current_position_suplier_bahan; i++)
-    {
-        if (bahan == bahans[i])
-        {
-            return i;
-        }
-    }
 
-    return -1;
-}
 
 void printBahanBaku(int status)
 {
@@ -308,7 +425,7 @@ void printBahanBaku(int status)
 
     for (int i = 0; i < current_position_stok; i++)
     {
-        if (status == 1 && jumlah_stoks[i] <= 0)
+        if ((status == 1 && jumlah_stoks[i] <= 0) || (jumlah_stoks[i] <= 0 && !status_bahan_stoks[i]))
         {
             continue;
         }
@@ -376,6 +493,7 @@ void tambahBahanBaku()
         kode_stoks[current_position_stok] = kode;
         nama_stoks[current_position_stok] = bahan;
         jumlah_stoks[current_position_stok] = jumlah;
+        status_bahan_stoks[current_position_stok] = true;
 
         current_position_stok++;
 
@@ -660,23 +778,11 @@ bool validateKodeProyekAktif(string kode)
     return false;
 }
 
-int indexOfBahan(string bahan)
-{
-    for (int i = 0; i < current_position_stok; i++)
-    {
-        /* code */
-        if (nama_stoks[i] == bahan)
-        {
-            return i;
-        }
-    }
 
-    return -1;
-}
 
 bool validateStockExist(int idx, int qtyPermintaan)
 {
-    if (jumlah_stoks[idx] > qtyPermintaan)
+    if (jumlah_stoks[idx] >= qtyPermintaan)
     {
         return true;
     }
@@ -807,7 +913,8 @@ void aksiMenuSplier()
         cout << "\nSuplier "
              << "\n1. Tambah data"
              << "\n2. Data suplier"
-             << "\n3. Kembali" << endl;
+             << "\n3. Non aktif suplier"
+             << "\n4. Kembali" << endl;
 
         cout << "Pilih aksi: ";
 
@@ -822,8 +929,10 @@ void aksiMenuSplier()
         case 2:
             printSuplier();
             break;
-
         case 3:
+            nonAktifSuplier();
+            break;
+        case 4:
             cout << "Kembali ke pilih menu admin!" << endl;
             break;
 
@@ -831,7 +940,7 @@ void aksiMenuSplier()
             cout << "Pilihan tidak valid silakan pilih aksi kembali!" << endl;
         }
 
-    } while (aksi != 3);
+    } while (aksi != 4);
 }
 
 void aksiMenuBahanBaku()
