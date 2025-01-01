@@ -649,6 +649,83 @@ void printProyekIdStatus()
     }
 }
 
+
+// print durasi proyeks
+int calculateDurationInDays(int startDay, int startMonth, int startYear, int endDay, int endMonth, int endYear) {
+    tm startDate = {};
+    startDate.tm_mday = startDay;       
+    startDate.tm_mon = startMonth - 1;   
+    startDate.tm_year = startYear - 1900;
+
+    tm endDate = {};
+    endDate.tm_mday = endDay;       
+    endDate.tm_mon = endMonth - 1;   
+    endDate.tm_year = endYear - 1900;
+
+
+    time_t startTime = std::mktime(const_cast<std::tm*>(&startDate));
+    time_t endTime = std::mktime(const_cast<std::tm*>(&endDate));
+
+    return static_cast<int>(difftime(endTime, startTime) / (60 * 60 * 24));
+}
+
+
+bool isProjectDelayed(int endDay, int endMonth, int endYear) {
+    tm endDate = {};
+    endDate.tm_mday = endDay;       
+    endDate.tm_mon = endMonth - 1;   
+    endDate.tm_year = endYear - 1900;
+
+    std::time_t endTime = std::mktime(const_cast<std::tm*>(&endDate));
+    std::time_t currentTime = std::time(nullptr); // Waktu saat ini
+    return currentTime > endTime; // true jika proyek terlambat
+}
+
+string convertStatusKeterlambatan(int endDay, int endMonth, int endYear) {
+    if(isProjectDelayed(endDay, endMonth, endYear)) {
+        return "Terlambat";
+    } 
+
+    return "Tepat Waktu";
+}
+
+
+void printDurasiProyek() {
+     cout << "" << endl;
+    cout << "Id  Kode                Jenis pesanan       Durasi       Status keterlambatan" << endl;
+    cout << "-----------------------------------------------------------------------------" << endl;
+
+    for (int i = 0; i < current_position_proyek; i++)
+    {
+        string id = to_string(i + 1);
+        cout << id;
+        for (int j = id.length(); j < 4; j++)
+        {
+            /* code */
+            cout << " ";
+        }
+
+        /* code */
+        cout << kode_proyeks[i];
+        for (int j = kode_proyeks[i].length(); j < 20; j++)
+        {
+            /* code */
+            cout << " ";
+        }
+
+        cout << pesanans[i];
+        for (int j = pesanans[i].length(); j < 20; j++)
+        {
+            /* code */
+            cout << " ";
+        }
+
+        cout << calculateDurationInDays(start_tanggal_proyeks[i], start_bulan_proyeks[i], start_tahun_proyeks[i], end_tanggal_proyeks[i], end_bulan_proyeks[i], end_tahun_proyeks[i] ) << " Hari";
+        cout << "       ";
+        cout << convertStatusKeterlambatan(end_tanggal_proyeks[i], end_bulan_proyeks[i], end_tahun_proyeks[i]);
+    }
+}
+
 // fungsi manajemen proyek
 void updatedStatusProyek()
 {
@@ -886,7 +963,8 @@ void aksiMenuAdminProyek()
         cout << "\n\nProyek "
              << "\n1. Tambah data"
              << "\n2. Lihat data"
-             << "\n3. Kembali" << endl;
+             << "\n3. Durasi proyek"
+             << "\n4. Kembali" << endl;
 
         cout << "Pilih aksi: ";
         cin >> aksi;
@@ -902,12 +980,15 @@ void aksiMenuAdminProyek()
             printProyek(0, current_position_proyek, 0);
             break;
         case 3:
+            printDurasiProyek();
+            break;
+        case 4:
             cout << "\nKembali ke menu admin!";
             break;
         default:
             break;
         }
-    } while (aksi != 3);
+    } while (aksi != 4);
 }
 
 void pilihRole()
