@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <ctime>
+#include <iomanip> 
 using namespace std;
 
 int app = 1, role, menu, aksi;
@@ -97,62 +99,56 @@ int indexOfBahan(string bahan)
 }
 
 // input and validate  tanggal
-bool validateTanggal(int tanggal, int bulan, int tahun)
-{
-    if (tanggal >= 0 && tanggal <= 31)
-    {
 
-        if (bulan == 2 && tanggal > 29)
-        {
-            return false;
-        }
-
-        // bulan tanggal 30
-        if (tanggal == 31 && (bulan == 2 || bulan == 4 || bulan == 6 || bulan == 9 || bulan == 11))
-        {
-            cout << "\ntanggal dan bulan invalid!!!!" << endl;
-            return false;
-        }
-
-        // bukan kabisat
-        int kabisat = false;
-        if ((tahun % 4 == 0 && tahun % 100 != 0) || tahun % 400 == 0)
-        {
-            kabisat = true;
-        }
-
-        // bulan 28
-        if (tanggal == 29 && bulan == 2 && !kabisat)
-        {
-            cout << "\nbukan tahun kabisat!!!!" << endl;
-            return false;
-        }
-
-        return true;
-    }
-
-    return false;
+bool isLeapYear(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
-bool validateBulan(int bulan)
-{
-    if (bulan >= 0 && bulan <= 12)
-    {
-        return true;
+bool isValidDate(int day, int month, int year) {
+    if (year < 1900 || year > 2100) {
+        return false; // Batasi tahun antara 1900 dan 2100
     }
 
-    cout << "\nbulan invalid!!!!" << endl;
-    return false;
+    if (month < 1 || month > 12) {
+        return false; // Bulan harus antara 1 dan 12
+    }
+
+    int daysInMonth;
+    switch (month) {
+        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+            daysInMonth = 31;
+            break;
+        case 4: case 6: case 9: case 11:
+            daysInMonth = 30;
+            break;
+        case 2:
+            daysInMonth = isLeapYear(year) ? 29 : 28;
+            break;
+        default:
+            return false; // Tidak seharusnya sampai sini
+    }
+
+    return (day >= 1 && day <= daysInMonth);
 }
 
-string convertIntToStr(int num)
-{
-    if (to_string(num).length() == 1)
-    {
-        return "0" + to_string(num);
-    }
-    return to_string(num);
+bool isStartDateBeforeEndDate(int startDay, int startMonth, int startYear, int endDay, int endMonth, int endYear) {
+    tm startDate = {};
+    startDate.tm_mday = startDay;       
+    startDate.tm_mon = startMonth - 1;   
+    startDate.tm_year = startYear - 1900;
+
+    tm endDate = {};
+    endDate.tm_mday = endDay;       
+    endDate.tm_mon = endMonth - 1;   
+    endDate.tm_year = endYear - 1900;
+
+
+    time_t startTime = std::mktime(const_cast<std::tm*>(&startDate));
+    time_t endTime = std::mktime(const_cast<std::tm*>(&endDate));
+
+    return startTime < endTime;
 }
+
 
 int indexOfSuplierKode(string kode)
 {
@@ -167,6 +163,20 @@ int indexOfSuplierKode(string kode)
     return -1;
 }
 
+
+
+string formatDate(int day, int month, int year) {
+    tm date = {};
+    date.tm_mday = day;       
+    date.tm_mon = month - 1;   
+    date.tm_year = year - 1900;
+
+    // Memformat tanggal ke dalam string
+    char buffer[100];
+    std::strftime(buffer, sizeof(buffer), "%d %B %Y", &date); // Format dd-mmmm-yyyy
+
+    return std::string(buffer);
+}
 
 
 bool validateSizeSuplierBahan()
@@ -541,8 +551,8 @@ string converStatus(int num)
 void printProyek(int from, int end, int status)
 {
     cout << "" << endl;
-    cout << "No  Kode                Jenis pesanan       Deskripsi                    Tanggal mulai  Tanggal selesai  Status pesanan" << endl;
-    cout << "-----------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "No  Kode                Jenis pesanan       Deskripsi                     Tanggal mulai            Tanggal selesai         Status pesanan" << endl;
+    cout << "-----------------------------------------------------------------------------------------------------------------------------------------" << endl;
 
     int nomor = 1;
     for (int i = from; i < end; i++)
@@ -581,11 +591,22 @@ void printProyek(int from, int end, int status)
             cout << " ";
         }
 
-        cout << convertIntToStr(start_tanggal_proyeks[i]) << "/" << convertIntToStr(start_bulan_proyeks[i]) << "/" << convertIntToStr(start_tahun_proyeks[i]);
-        cout << "     ";
+        string startDate = formatDate(start_tanggal_proyeks[i], start_bulan_proyeks[i], start_tahun_proyeks[i]);
+        cout << startDate;
+         for (int j = startDate.length(); j < 25; j++)
+        {
+            /* code */
+            cout << " ";
+        }
 
-        cout << convertIntToStr(end_tanggal_proyeks[i]) << "/" << convertIntToStr(end_bulan_proyeks[i]) << "/" << convertIntToStr(end_tahun_proyeks[i]);
-        cout << "       ";
+        string endDate = formatDate(end_tanggal_proyeks[i], end_bulan_proyeks[i], end_tahun_proyeks[i]);
+
+        cout << endDate;
+        for (int j = endDate.length(); j < 25; j++)
+        {
+            /* code */
+            cout << " ";
+        }
 
         cout << converStatus(status_proyeks[i]);
 
@@ -733,7 +754,7 @@ void tambahDataProyek()
         cin >> start_tahun;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         inputTglStart++;
-    } while (!validateBulan(start_bulan) || !validateTanggal(start_tanggal, start_bulan, start_tahun));
+    } while (!isValidDate(start_tanggal, start_bulan, start_tahun));
 
     do
     {
@@ -755,7 +776,14 @@ void tambahDataProyek()
         cout << "Masukan tahun: ";
         cin >> end_tahun;
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    } while (!validateBulan(end_bulan) || !validateTanggal(end_tanggal, end_bulan, end_tahun));
+    } while (!isValidDate(end_tanggal, end_bulan, end_tahun));
+
+
+    if(!isStartDateBeforeEndDate(start_tanggal, start_bulan, start_tahun, end_tanggal, end_bulan, end_tahun)) {
+        cout << "\nTanggal selesai tidak boleh lebih awal dari tanggal mulai!" << endl;
+        return;
+    }
+
 
     // push ke data
     kode_proyeks[current_position_proyek] = kode;
